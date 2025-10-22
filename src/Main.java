@@ -16,7 +16,7 @@ public class Main {
         Zaino zaino = new Zaino("Invicta", "Blu", 20);
         System.out.println("Zaino:\n" + zaino);
 
-        // Try to insert objects
+
         try {
             zaino.inserisciCosa(libro);
             zaino.inserisciCosa(bottiglia);
@@ -40,5 +40,6 @@ public class Main {
         }
 
         System.out.println("Peso zaino scolastico: " + zainoScuola.getPeso());
+        zainoScuola.esporta("carciofo.json");
     }
 }

@@ -1,12 +1,20 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Rappresentazione di uno Zaino
  * @author Greta Maria Brugnatti
  * @version 2025-10-09
+ *
  */
 
-public class Zaino implements Pesabile{
+public class Zaino implements Pesabile, Archivable, Serializable {
     private String marca;
     private String colore;
     private double capacitaLitri;
@@ -177,5 +185,25 @@ public class Zaino implements Pesabile{
         } else {
             throw new IllegalArgumentException("La cosa è troppo pesante o troppo grande per stare nello zaino!");
         }
+    }
+
+    /**
+     * Salva su file le informazioni dell'oggetto zaino corrente
+     * @param fileName Nome del file su cui salvare i dati
+     */
+    public void esporta(String fileName){
+        Gson jsonObj = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter(fileName, true)){
+            jsonObj.toJson(this, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void importa(String fileName){
+    }
+
+    public void load(String fileName){
+
     }
 }
