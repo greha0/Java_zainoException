@@ -1,11 +1,9 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Rappresentazione di uno Zaino
@@ -193,17 +191,66 @@ public class Zaino implements Pesabile, Archivable, Serializable {
      */
     public void esporta(String fileName){
         Gson jsonObj = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter(fileName, true)){
+        if(new File(fileName + ".json").exists()){
+            System.out.println("Il file esiste già");
+            return;
+        }
+        try (FileWriter writer = new FileWriter(fileName + ".json", true)){
             jsonObj.toJson(this, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void importa(String fileName){
+    public static Zaino importa(String fileName) {
+        Gson jsonObj = new Gson();
+        String jsonFilePath = ""+fileName+ ".json";
+
+        Zaino z = null;
+        try (Reader reader = new FileReader(jsonFilePath)) {
+
+            z = jsonObj.fromJson(reader, Zaino.class);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return z;
     }
 
     public void load(String fileName){
+        String jsonFilePath = fileName + ".json";
+        Gson gson = new Gson();
 
+        try (FileReader reader = new FileReader(jsonFilePath)) {
+            JsonElement rootElement = JsonParser.parseReader(reader);
+
+            if (rootElement != null && rootElement.isJsonObject()) {
+                JsonElement contenutoElement = rootElement.getAsJsonObject().get("contenuto");
+
+                if (contenutoElement != null && contenutoElement.isJsonArray()) {
+                    JsonArray jsonArray = contenutoElement.getAsJsonArray();
+                    Type listType = new TypeToken<ArrayList<Cosa>>(){}.getType();
+
+                    ArrayList<Cosa> nuovoContenuto = gson.fromJson(jsonArray, listType);
+
+                    // Aggiorna il contenuto dell'oggetto corrente
+                    this.contenuto = nuovoContenuto;
+
+                    System.out.println("Contenuto dello zaino caricato con successo dal file: " + jsonFilePath);
+                } else {
+                    System.err.println("Il file JSON non contiene un array 'contenuto' valido.");
+                }
+            } else {
+                System.err.println("Il file non contiene un oggetto JSON valido.");
+            }
+
+        } catch (IOException e) {
+            System.err.println("Errore di I/O durante la lettura del file: " + jsonFilePath);
+            e.printStackTrace();
+        } catch (JsonSyntaxException e) {
+            System.err.println("Errore di sintassi JSON nel file: " + jsonFilePath);
+            e.printStackTrace();
+        }
     }
-}
+    }
+

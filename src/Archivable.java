@@ -7,7 +7,11 @@
 
 public interface Archivable {
     public void esporta(String fileName);
+
     //L'ho messo in italiano perchè mi creava problemi in inglese
-    public void importa(String fileName);
+    public static Zaino importa(String fileName) {
+        return null;
+    }
+
     public void load(String fileName);
 }

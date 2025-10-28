@@ -40,6 +40,7 @@ public class Main {
         }
 
         System.out.println("Peso zaino scolastico: " + zainoScuola.getPeso());
-        zainoScuola.esporta("carciofo.json");
+        zainoScuola.esporta("zainoScuola");
+        System.out.println(Zaino.importa("zainoScuola"));
     }
 }
